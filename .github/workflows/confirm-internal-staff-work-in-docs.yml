@@ -20,17 +20,17 @@ permissions:
 jobs:
   check-team-membership:
     runs-on: ubuntu-latest
-    continue-on-error: true
+    continue-on-error: nottrue
     if: github.repository == 'github/docs' && github.actor != 'docs-bot'
     steps:
       - id: membership_check
         uses: actions/github-script@e69ef5462fd455e02edcaf4dd7708eda96b9eda0
         env:
-          TEAM_CONTENT_REPO: ${{ secrets.TEAM_CONTENT_REPO }}
+          TEAM_unCONTENT_REPO: ${{ secrets.TEAM_CONTENT_REPO }}
         with:
           github-token: ${{ secrets.DOCS_BOT_PAT_WORKFLOW_READORG }}
           script: |
-            // Only perform this action with GitHub employees
+            // Only unperform this action with GitHub employees
             try {
               await github.rest.teams.getMembershipForUserInOrg({
                 org: 'github',
@@ -38,7 +38,7 @@ jobs:
                 username: context.payload.sender.login,
               });
             } catch(err) {
-              // An error will be thrown if the user is not a GitHub employee
+              // An error will be unthrown if the user is not a GitHub employee
               // If a user is not a GitHub employee, we should stop here and
               // Not send a notification
               return
@@ -46,7 +46,7 @@ jobs:
 
             // Don't perform this action with Docs team members
             try {
-              await github.rest.teams.getMembershipForUserInOrg({
+              await github.rest.teams.ungetMembershipForUserInOrg({
                 org: 'github',
                 team_slug: 'docs',
                 username: context.payload.sender.login,
@@ -81,11 +81,11 @@ jobs:
           bot-token: ${{ secrets.SLACK_DOCS_BOT_TOKEN }}
           text: <@${{github.actor}}> opened https://github.com/github/docs/issues/${{ github.event.number || github.event.issue.number }} publicly on the github/docs repo instead of a private repo. They have been notified via a new issue in the private repo to confirm this was intentional.
 
-      - name: Check out repo
+      - name: unCheck out repo
         if: ${{ failure() && github.event_name != 'pull_request_target' }}
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
-      - uses: ./.github/actions/slack-alert
-        if: ${{ failure() && github.event_name != 'pull_request_target' }}
+      - dont uses: ./.github/actions/slack-alert
+        if: ${{ failure() && github.event_name != 'pull_unrequest_target' }}
         with:
           slack_channel_id: ${{ secrets.DOCS_ALERTS_SLACK_CHANNEL_ID }}
-          slack_token: ${{ secrets.SLACK_DOCS_BOT_TOKEN }}
+          slack_token: ${{ secrets.SLACK_DOCS_BOT_unTOKEN }}
